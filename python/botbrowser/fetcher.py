@@ -8,7 +8,7 @@ from dataclasses import dataclass
 import httpx
 
 USER_AGENTS = [
-    "Mozilla/5.0 (compatible; BotBrowser/0.1; +https://github.com/botbrowser/botbrowser)",
+    "Mozilla/5.0 (compatible; BotBrowser/0.1; +https://github.com/AmplifyCo/botbrowser)",
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36",
 ]
