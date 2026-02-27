@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Dict, Literal, Optional
 from pydantic import BaseModel
 
 
@@ -13,7 +13,7 @@ class ExtractOptions(BaseModel):
     format: Literal["markdown", "text"] = "markdown"
     timeout: int = 15000
     include_links: bool = True
-    headers: dict[str, str] | None = None
+    headers: Optional[Dict[str, str]] = None
 
 
 class ExtractedLink(BaseModel):
