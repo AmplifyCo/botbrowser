@@ -30,14 +30,10 @@ jobs:
       - run: pnpm test
         working-directory: js
 
-      # Publish core package
-      - run: pnpm publish --access public --no-git-checks
+      # Publish core package (uses OIDC trusted publishing)
+      - run: npm publish --access public --provenance
         working-directory: js/packages/core
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      # Publish server package
-      - run: pnpm publish --access public --no-git-checks
+      # Publish server package (uses OIDC trusted publishing)
+      - run: npm publish --access public --provenance
         working-directory: js/packages/server
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
