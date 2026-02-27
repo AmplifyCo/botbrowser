@@ -1,66 +1,67 @@
-# BotBrowser
+<p align="center">
+  <h1 align="center">BotBrowser</h1>
+  <p align="center">Token-efficient web browser for LLM agents</p>
+</p>
 
-Token-efficient web content extraction for LLM agents. Strips the bloat, keeps the content, saves your tokens.
+<p align="center">
+  <a href="https://www.npmjs.com/package/botbrowser"><img src="https://img.shields.io/npm/v/botbrowser?color=blue&label=npm" alt="npm"></a>
+  <a href="https://pypi.org/project/botbrowser/"><img src="https://img.shields.io/pypi/v/botbrowser?color=blue&label=pypi" alt="PyPI"></a>
+  <a href="https://github.com/AmplifyCo/botbrowser/actions"><img src="https://img.shields.io/github/actions/workflow/status/AmplifyCo/botbrowser/ci.yml?label=tests" alt="CI"></a>
+  <a href="https://github.com/AmplifyCo/botbrowser/blob/main/LICENSE"><img src="https://img.shields.io/github/license/AmplifyCo/botbrowser" alt="License"></a>
+</p>
 
-## The Problem
+---
 
-A typical web page is **50,000+ tokens**. The useful content? Maybe **2,000–5,000 tokens**. That's 90–95% waste — scripts, styles, ads, navigation, footers, tracking pixels.
+A typical web page is **50,000+ tokens**. The useful content? **2,000–5,000 tokens**.
 
-BotBrowser extracts just the content and returns clean markdown, optimized for LLM consumption.
+BotBrowser strips the bloat and gives your agents clean markdown — saving **90–95% of tokens**.
+
+```
+Raw HTML:   52,000 tokens  ████████████████████████████████████████████████████
+BotBrowser:  3,200 tokens  ██████
+                           ↑ 94% savings
+```
 
 ## Install
 
-### JavaScript / TypeScript
-
 ```bash
-npm install botbrowser
+npm install botbrowser    # JavaScript / TypeScript
+```
+```bash
+pip install botbrowser    # Python
 ```
 
-### Python
-
-```bash
-pip install botbrowser
-```
+No API key. No server. No config. Just install and extract.
 
 ## Quick Start
 
-### JavaScript / TypeScript
-
 ```typescript
+// JavaScript / TypeScript
 import { extract } from 'botbrowser';
 
 const result = await extract('https://example.com/article');
-
-console.log(result.content);                       // clean markdown
-console.log(result.metadata.tokenSavingsPercent);   // e.g. 94
-console.log(result.title);                          // page title
-console.log(result.links);                          // extracted links
+console.log(result.content);       // clean markdown
+console.log(result.metadata.tokenSavingsPercent);  // 94
 ```
 
-### Python
-
 ```python
+# Python
 from botbrowser import extract
 
 result = extract("https://example.com/article")
-
-print(result.content)                          # clean markdown
-print(result.metadata.token_savings_percent)   # e.g. 94
-print(result.title)                            # page title
-print(result.links)                            # extracted links
+print(result.content)                         # clean markdown
+print(result.metadata.token_savings_percent)  # 94
 ```
 
-## Output
-
-Both packages return the same structure:
+## What You Get Back
 
 ```json
 {
   "url": "https://example.com/article",
   "title": "Article Title",
-  "description": "Meta description of the page",
+  "description": "Meta description",
   "content": "# Article Title\n\nClean markdown content...",
-  "textContent": "Plain text version of the content...",
+  "textContent": "Plain text version...",
   "links": [
     { "text": "Related Article", "href": "https://example.com/related" }
   ],
@@ -74,10 +75,28 @@ Both packages return the same structure:
 }
 ```
 
+## Why BotBrowser?
+
+- **Token-first** — Built specifically to minimize LLM token usage. Every design decision optimizes for fewer tokens while preserving meaning.
+- **Dual native SDKs** — Real implementations in both JS and Python, not thin wrappers. Use whichever fits your stack.
+- **Zero setup** — `npm install` or `pip install`. No API key, no account, no server to run. Works offline.
+- **Battle-tested extraction** — Mozilla Readability (JS) and Trafilatura (Python) — the same engines powering Firefox Reader View and academic web research.
+- **Open source** — MIT licensed. Self-host, fork, embed, do what you want.
+
+## How It Works
+
+```
+URL → Fetch → Extract → Clean → Markdown
+```
+
+1. **Fetch** — Smart HTTP with user-agent rotation, redirect handling, timeouts
+2. **Extract** — Identifies main content using Readability (JS) / Trafilatura (Python)
+3. **Clean** — Strips scripts, styles, ads, nav, footers, cookie banners, tracking, hidden elements
+4. **Convert** — Clean Markdown preserving headings, lists, links, tables, code blocks
+
 ## Options
 
 ```typescript
-// JavaScript
 const result = await extract({
   url: 'https://example.com',
   format: 'text',          // "markdown" (default) or "text"
@@ -87,28 +106,22 @@ const result = await extract({
 ```
 
 ```python
-# Python
 result = extract(
     "https://example.com",
-    format="text",          # "markdown" (default) or "text"
-    timeout=10000,          # request timeout in ms (default: 15000)
-    include_links=False,    # extract links (default: True)
+    format="text",
+    timeout=10000,
+    include_links=False,
 )
 ```
 
-## Optional: REST API Server
+## REST API (Optional)
 
-For language-agnostic access or shared infrastructure, run the self-hostable REST API:
+For language-agnostic access or shared infrastructure:
 
 ```bash
-# With Docker
 docker compose up
-
-# Or directly
-cd js && pnpm install && pnpm build && pnpm dev
+# or: cd js && pnpm install && pnpm build && pnpm dev
 ```
-
-Then call it from any language:
 
 ```bash
 curl -X POST http://localhost:3000/extract \
@@ -116,9 +129,7 @@ curl -X POST http://localhost:3000/extract \
   -d '{"url": "https://example.com"}'
 ```
 
-### Python Client Mode
-
-If you're running the REST API server, you can use the Python client:
+Python client for the REST API:
 
 ```python
 from botbrowser import BotBrowserClient
@@ -127,39 +138,15 @@ client = BotBrowserClient("http://localhost:3000")
 result = client.extract("https://example.com")
 ```
 
-## How It Works
-
-1. **Fetch** — Smart HTTP fetching with user-agent rotation, redirect handling, timeouts
-2. **Extract** — Identifies main content using Mozilla Readability (JS) / Trafilatura (Python)
-3. **Clean** — Strips scripts, styles, ads, nav, footers, cookie banners, hidden elements
-4. **Convert** — Produces clean Markdown preserving structure (headings, lists, links, tables)
-5. **Report** — Returns token estimates so you can see the savings
-
 ## Development
 
 ```bash
-# JS — build and test
+# JS
 cd js && pnpm install && pnpm build && pnpm test
 
-# Python — install and test
+# Python
 cd python && pip install -e ".[dev]" && pytest tests/ -v
-
-# Run the API server locally
-cd js && pnpm dev
 ```
-
-## Publishing
-
-Packages are published automatically via GitHub Actions when a release is created:
-
-- **npm**: `botbrowser` (core) and `@botbrowser/server`
-- **PyPI**: `botbrowser`
-
-### Setup required:
-
-**For npm:** Add `NPM_TOKEN` secret to your GitHub repo settings (get from npmjs.com > Access Tokens).
-
-**For PyPI:** Configure [trusted publishing](https://docs.pypi.org/trusted-publishers/) in PyPI for your GitHub repo, or add `PYPI_API_TOKEN` secret.
 
 ## License
 
